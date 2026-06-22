@@ -4,7 +4,7 @@ CREATE TABLE ocorrencias (
                              endereco VARCHAR(255) NOT NULL,
                              descricao TEXT,
                              status VARCHAR(50) NOT NULL,
-                             data_registro DATETIME NOT NULL,
+                             data_registro TIMESTAMP NOT NULL,
                              usuario_id BIGINT NOT NULL,
                              CONSTRAINT fk_ocorrencia_usuario FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
 );

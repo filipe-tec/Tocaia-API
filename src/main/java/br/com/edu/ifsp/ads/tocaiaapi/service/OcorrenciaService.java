@@ -1,5 +1,7 @@
 package br.com.edu.ifsp.ads.tocaiaapi.service;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import br.com.edu.ifsp.ads.tocaiaapi.domain.Ocorrencia;
 import br.com.edu.ifsp.ads.tocaiaapi.domain.StatusOcorrencia;
 import br.com.edu.ifsp.ads.tocaiaapi.domain.Usuario;
@@ -26,7 +28,7 @@ public class OcorrenciaService {
                 .orElseThrow(() -> new RuntimeException("Ocorrência não encontrada!"));
 
         if (ocorrencia.getStatus() == StatusOcorrencia.RESOLVIDA) {
-            throw new RuntimeException("Ocorrência já foi encerrada anteriormente.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ocorrência já foi encerrada anteriormente.");
         }
 
         ocorrencia.resolver();
