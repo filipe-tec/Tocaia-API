@@ -17,7 +17,15 @@ public class Usuario implements UserDetails {
     private String senha;
     private String papel; // Ex: ROLE_CIDADAO, ROLE_POLICIAL
 
-    // Construtores, Getters e Setters omitidos para brevidade (Gere-os na IDE)
+    // Construtor padrão exigido pelo JPA/Hibernate
+    public Usuario() {}
+
+    // Construtor para o nosso Controller
+    public Usuario(String cpf, String senha, String papel) {
+        this.cpf = cpf;
+        this.senha = senha;
+        this.papel = papel;
+    }
 
     public Long getId() { return id; }
     public String getCpf() { return cpf; }

@@ -15,18 +15,25 @@ public class TocaiaApiApplication {
     }
 
     @Bean
-    public CommandLineRunner injetarUsuarioDeTeste(JdbcTemplate jdbcTemplate, PasswordEncoder encoder) {
+    public CommandLineRunner injetarUsuariosPoliciais(JdbcTemplate jdbcTemplate, PasswordEncoder encoder) {
         return args -> {
-            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuarios", Integer.class);
+            // Verifica se já existem policiais para evitar erros de duplicidade no banco
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuarios WHERE papel = 'ROLE_POLICIAL'", Integer.class);
 
-            if (count != null && count == 0) {
-                // Criptografa a senha na hora, eliminando falhas de cópia do hash
+            if (count != null && count < 2) {
                 String senhaCriptografada = encoder.encode("123456");
 
-                String sql = "INSERT INTO usuarios (cpf, senha, papel) VALUES ('11122233344', '" + senhaCriptografada + "', 'ROLE_POLICIAL');";
-                jdbcTemplate.execute(sql);
-                System.out.println("🚨 SISTEMA: Usuário Policial (CPF: 11122233344, Senha: 123456) injetado com sucesso para testes!");
+                // Injeta dois policiais distintos
+                injetarPolicial(jdbcTemplate, "11122233344", senhaCriptografada);
+                injetarPolicial(jdbcTemplate, "55566677788", senhaCriptografada);
+
+                System.out.println("🚨 SISTEMA: Dois usuários Policiais foram injetados com sucesso para testes!");
             }
         };
+    }
+
+    private void injetarPolicial(JdbcTemplate jdbcTemplate, String cpf, String senha) {
+        String sql = "INSERT INTO usuarios (cpf, senha, papel) VALUES (?, ?, 'ROLE_POLICIAL')";
+        jdbcTemplate.update(sql, cpf, senha);
     }
 }
