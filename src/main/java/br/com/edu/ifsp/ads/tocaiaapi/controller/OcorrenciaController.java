@@ -3,6 +3,7 @@ package br.com.edu.ifsp.ads.tocaiaapi.controller;
 import br.com.edu.ifsp.ads.tocaiaapi.domain.Usuario;
 import br.com.edu.ifsp.ads.tocaiaapi.dto.DadosDetalhamentoOcorrencia;
 import br.com.edu.ifsp.ads.tocaiaapi.dto.DadosRegistroOcorrencia;
+import br.com.edu.ifsp.ads.tocaiaapi.repository.OcorrenciaRepository;
 import br.com.edu.ifsp.ads.tocaiaapi.service.OcorrenciaService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -19,6 +20,9 @@ public class OcorrenciaController {
 
     @Autowired
     private OcorrenciaService service;
+
+    @Autowired
+    private OcorrenciaRepository repository;
 
     @PostMapping
     @Transactional
@@ -39,5 +43,18 @@ public class OcorrenciaController {
     public ResponseEntity<DadosDetalhamentoOcorrencia> darBaixa(@PathVariable Long id) {
         var detalhamento = service.darBaixa(id);
         return ResponseEntity.ok(detalhamento);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosDetalhamentoOcorrencia> detalhar(@PathVariable Long id) {
+        var ocorrencia = repository.findById(id);
+
+        // Verifica se a ocorrência existe no banco de dados
+        if (ocorrencia.isPresent()) {
+            return ResponseEntity.ok(new DadosDetalhamentoOcorrencia(ocorrencia.get()));
+        }
+
+        // Se digitarem um ID que não existe, devolve erro 404
+        return ResponseEntity.notFound().build();
     }
 }

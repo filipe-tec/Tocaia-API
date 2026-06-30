@@ -27,7 +27,7 @@ public class TocaiaApiApplication {
                 injetarPolicial(jdbcTemplate, "11122233344", senhaCriptografada);
                 injetarPolicial(jdbcTemplate, "55566677788", senhaCriptografada);
 
-                System.out.println("🚨 SISTEMA: Dois usuários Policiais foram injetados com sucesso para testes!");
+                System.out.println("🚨 SISTEMA: Dois usuários Policiais foram injetados com sucesso!");
             }
         };
     }
