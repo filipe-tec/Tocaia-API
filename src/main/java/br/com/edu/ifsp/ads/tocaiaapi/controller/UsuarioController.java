@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +34,22 @@ public class UsuarioController {
         repository.save(usuario);
 
         return ResponseEntity.ok("Usuário cadastrado com sucesso!");
+    }
+
+    @PostMapping("/policial")
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_POLICIAL')") // Apenas policiais podem executar isso
+    public ResponseEntity registrarPolicial(@RequestBody @Valid DadosCadastroUsuario dados) {
+        if (repository.findByCpf(dados.cpf()) != null) {
+            return ResponseEntity.badRequest().body("Erro: CPF já cadastrado.");
+        }
+
+        var senhaCriptografada = passwordEncoder.encode(dados.senha());
+        // Aqui forçamos a ROLE_POLICIAL
+        var policial = new Usuario(dados.cpf(), senhaCriptografada, "ROLE_POLICIAL");
+
+        repository.save(policial);
+
+        return ResponseEntity.ok("Policial cadastrado com sucesso!");
     }
 }
